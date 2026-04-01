@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routers import user_router, product_router, order_router
+from app.routers import user_router, product_router, order_router, auth_router
 
 from app.models import User, Product, Order
 
@@ -34,6 +34,7 @@ app.add_middleware(
 app.include_router(user_router)
 app.include_router(product_router)
 app.include_router(order_router)
+app.include_router(auth_router)
 
 @app.get("/")
 async def root():

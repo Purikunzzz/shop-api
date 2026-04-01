@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
+from app.auth import hash_password
 
 class UserService:
 
@@ -41,7 +42,7 @@ class UserService:
         user = User(
             name=data.name,
             email=data.email,
-            hashed_password=data.password,
+            hashed_password=hash_password(data.password),
         )
 
         db.add(user)

@@ -3,20 +3,24 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.schemas.order import OrderCreated, OrderResponse
 from app.services.order import order_service
+from app.dependencies import get_current_user
+from app.models.user import User
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
 @router.get("/user/{user_id}", response_model=list[OrderResponse])
 async def get_user_order(
     user_id: int,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     return await order_service.get_by_user(db, user_id)
 
 @router.get("/{order_id}", response_model=OrderResponse)
 async def get_order(
     order_id: int,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     order = await order_service.get_by_id(db, order_id)
     if not order:
@@ -28,7 +32,8 @@ async def get_order(
 async def create_order(
     user_id: int,
     body: OrderCreated,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     try:
         return await order_service.create(db, user_id, body)
